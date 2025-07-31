@@ -1,8 +1,8 @@
 {
 	"info": {
 		"_postman_id": "def6656a-14a5-4341-9b98-a4c00e4f007e",
-		"name": "collection 1 - Restful Booker",
-		"description": "A collection to demonstrate the workflow for the Restful-Booker API: Create, Authenticate, Update, and Get.",
+		"name": "collection 1 - Restful Booker (with QA Tests)",
+		"description": "A collection to demonstrate the workflow for the Restful-Booker API: Create, Authenticate, Update, and Get. Now with added QA tests to validate each step.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "9917303"
 	},
@@ -14,13 +14,33 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"// Parse the response body to get the booking ID",
+							"// --- Setup ---",
 							"const jsonData = pm.response.json();",
 							"",
 							"// Save the bookingId to a collection variable to use in other requests",
 							"pm.collectionVariables.set(\"bookingId\", jsonData.bookingid);",
+							"console.log(`Booking ID ${jsonData.bookingid} saved.`);",
 							"",
-							"console.log(`Booking ID ${jsonData.bookingid} saved.`);"
+							"// --- Tests ---",
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has a booking ID\", function () {",
+							"    pm.expect(jsonData.bookingid).to.exist.and.to.be.a('number');",
+							"});",
+							"",
+							"pm.test(\"Booking details match the request body\", function () {",
+							"    const requestBody = JSON.parse(pm.request.body.raw);",
+							"    const booking = jsonData.booking;",
+							"",
+							"    pm.expect(booking.firstname).to.eql(requestBody.firstname, \"Firstname should match\");",
+							"    pm.expect(booking.lastname).to.eql(requestBody.lastname, \"Lastname should match\");",
+							"    pm.expect(booking.totalprice).to.eql(requestBody.totalprice, \"Total price should match\");",
+							"    pm.expect(booking.depositpaid).to.eql(requestBody.depositpaid, \"Deposit paid status should match\");",
+							"    pm.expect(booking.bookingdates.checkin).to.eql(requestBody.bookingdates.checkin, \"Check-in date should match\");",
+							"    pm.expect(booking.bookingdates.checkout).to.eql(requestBody.bookingdates.checkout, \"Checkout date should match\");",
+							"});"
 						],
 						"type": "text/javascript"
 					}
@@ -67,13 +87,25 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"// Parse the response body to get the auth token",
+							"// --- Setup ---",
 							"const jsonData = pm.response.json();",
 							"",
 							"// Save the token to a collection variable for use in authenticated requests",
 							"pm.collectionVariables.set(\"authToken\", jsonData.token);",
+							"console.log(\"Auth Token saved.\");",
 							"",
-							"console.log(\"Auth Token saved.\");"
+							"// --- Tests ---",
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response has an auth token\", function () {",
+							"    pm.expect(jsonData.token).to.be.a('string').and.to.not.be.empty;",
+							"});",
+							"",
+							"pm.test(\"Response time is within acceptable range\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(800);",
+							"});"
 						],
 						"type": "text/javascript"
 					}
@@ -111,6 +143,31 @@
 		},
 		{
 			"name": "Update Booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Booking was updated with the correct details\", function () {",
+							"    const requestBody = JSON.parse(pm.request.body.raw);",
+							"    ",
+							"    pm.expect(jsonData.firstname).to.eql(requestBody.firstname, \"Firstname was not updated correctly\");",
+							"    pm.expect(jsonData.lastname).to.eql(requestBody.lastname, \"Lastname was not updated correctly\");",
+							"    pm.expect(jsonData.totalprice).to.eql(requestBody.totalprice, \"Total price was not updated correctly\");",
+							"    pm.expect(jsonData.bookingdates.checkin).to.eql(requestBody.bookingdates.checkin, \"Check-in date was not updated correctly\");",
+							"    pm.expect(jsonData.additionalneeds).to.eql(requestBody.additionalneeds, \"Additional needs were not updated\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -151,7 +208,35 @@
 			"response": []
 		},
 		{
-			"name": "Get Booking by ID",
+			"name": "Get Booking by ID (Verify Update)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Verify booking details reflect the update\", function () {",
+							"    // These values should match the data from the 'Update Booking' request",
+							"    pm.expect(jsonData.firstname).to.eql(\"James\", \"Firstname should be the updated value\");",
+							"    pm.expect(jsonData.lastname).to.eql(\"Bond\", \"Lastname should be the updated value\");",
+							"    pm.expect(jsonData.totalprice).to.eql(700, \"Total price should be the updated value\");",
+							"    pm.expect(jsonData.additionalneeds).to.eql(\"Shaken, not stirred Martini\", \"Additional needs should be the updated value\");",
+							"});",
+							"",
+							"pm.test(\"Verify booking dates reflect the update\", function () {",
+							"    pm.expect(jsonData.bookingdates.checkin).to.eql(\"2024-07-01\");",
+							"    pm.expect(jsonData.bookingdates.checkout).to.eql(\"2024-07-07\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "GET",
 				"header": [
