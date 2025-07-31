@@ -1,0 +1,190 @@
+{
+	"info": {
+		"_postman_id": "ecb4b384-37e7-47fb-9cea-b06fe5f9d017",
+		"name": "booking scenario 2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46130343",
+		"_collection_link": "https://baseil.postman.co/workspace/BASEIL's-Workspace~1556efc2-ad33-4528-8e21-87b091137e8b/collection/46130343-ecb4b384-37e7-47fb-9cea-b06fe5f9d017?action=share&source=collection_link&creator=46130343"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/booking",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/booking",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Get the token from the collection variable\r",
+							"let token = pm.collectionVariables.get(\"token\");\r",
+							"\r",
+							"// Save it into the environment variable called 'scenarios2'\r",
+							"if (token) {\r",
+							"    pm.environment.set(\"scenario2\", token);\r",
+							"    console.log(\"Token successfully copied to environment variable 'scenario2'\");\r",
+							"} else {\r",
+							"    console.warn(\"Token not found in collection variables.\");\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/auth",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Simple status check (e.g. 200 or 204)\r",
+							"pm.test(\"Delete request successful\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+							"});\r",
+							"\r",
+							"// Optional: Check body for confirmation message\r",
+							"let response = pm.response.text();\r",
+							"pm.test(\"Response confirms deletion\", function () {\r",
+							"    pm.expect(response.toLowerCase()).to.include(\"deleted\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "b668cd6bf7bb079",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/booking/id",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"booking",
+						"id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all bookings",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/booking/3157",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"booking",
+						"3157"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
