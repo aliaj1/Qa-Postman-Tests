@@ -1,0 +1,195 @@
+{
+	"info": {
+		"_postman_id": "def6656a-14a5-4341-9b98-a4c00e4f007e",
+		"name": "collection 1 - Restful Booker",
+		"description": "A collection to demonstrate the workflow for the Restful-Booker API: Create, Authenticate, Update, and Get.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9917303"
+	},
+	"item": [
+		{
+			"name": "Create Booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response body to get the booking ID",
+							"const jsonData = pm.response.json();",
+							"",
+							"// Save the bookingId to a collection variable to use in other requests",
+							"pm.collectionVariables.set(\"bookingId\", jsonData.bookingid);",
+							"",
+							"console.log(`Booking ID ${jsonData.bookingid} saved.`);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\" : \"Jim\",\n    \"lastname\" : \"Brown\",\n    \"totalprice\" : 111,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2024-01-01\",\n        \"checkout\" : \"2024-01-15\"\n    },\n    \"additionalneeds\" : \"Breakfast\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/booking",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"booking"
+					]
+				},
+				"description": "Creates a new booking in the API. The `bookingid` from the response is automatically saved as a collection variable for use in subsequent requests."
+			},
+			"response": []
+		},
+		{
+			"name": "Auth - Create Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the response body to get the auth token",
+							"const jsonData = pm.response.json();",
+							"",
+							"// Save the token to a collection variable for use in authenticated requests",
+							"pm.collectionVariables.set(\"authToken\", jsonData.token);",
+							"",
+							"console.log(\"Auth Token saved.\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\" : \"admin\",\n    \"password\" : \"password123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/auth",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth"
+					]
+				},
+				"description": "Authenticates with the API using default credentials (`admin`/`password123`) to receive a token. The token is automatically saved as a collection variable."
+			},
+			"response": []
+		},
+		{
+			"name": "Update Booking",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{authToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\" : \"James\",\n    \"lastname\" : \"Bond\",\n    \"totalprice\" : 700,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2024-07-01\",\n        \"checkout\" : \"2024-07-07\"\n    },\n    \"additionalneeds\" : \"Shaken, not stirred Martini\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/booking/{{bookingId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{bookingId}}"
+					]
+				},
+				"description": "Updates the details of the booking created earlier. This request requires a valid `bookingId` from the **Create Booking** request and an `authToken` from the **Auth** request."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Booking by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/booking/{{bookingId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{bookingId}}"
+					]
+				},
+				"description": "Retrieves the details for a specific booking using the `bookingId` saved from the **Create Booking** request. This is useful to verify that the **Update Booking** request was successful."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://restful-booker.herokuapp.com",
+			"type": "string"
+		},
+		{
+			"key": "bookingId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

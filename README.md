@@ -49,10 +49,52 @@ The requests are ordered to follow a logical test flow.
     *   **Partial Update Booking (PATCH):** Updates a specific field in the booking. Also requires the auth token cookie.
     *   **Delete Booking:** Deletes the created booking. Requires the auth token cookie.
 
-### Getting Started
+# Restful-Booker API Postman Collection 1
 
-1.  **Set Up Postman Environment:**
-    *   Create a new Environment in Postman.
-    *   Add a variable `baseUrl` with the value `https://restful-booker.herokuapp.com`.
-    *   The variables `token` and `bookingid` will be created and updated **dynamically** by the test scripts as you run the collection.
-2.  **Run:** Select the environment and run the collection. The requests are designed to be run in order.
+This repository contains a Postman collection designed to test and demonstrate the core functionality of the **Restful-Booker API**. The collection provides a clear, sequential workflow for creating, authenticating, updating, and retrieving a booking.
+
+## What is Restful-Booker?
+
+Restful-Booker is a web API specifically created for learning and practicing how to test web services. It mimics a real-world booking system, offering endpoints for CRUD (Create, Read, Update, Delete) operations.
+
+You can find the official API documentation here: [https://restful-booker.herokuapp.com/apidoc/index.html](https://restful-booker.herokuapp.com/apidoc/index.html)
+
+## How to Use This Collection
+
+### Prerequisites
+- You must have [Postman](https://www.postman.com/downloads/) installed on your machine.
+
+### 1. Import the Collection
+1.  Download the `restful-booker.postman_collection.json` file from this repository.
+2.  Open Postman.
+3.  Click the **Import** button in the top-left corner.
+4.  Upload the downloaded JSON file.
+5.  The collection, named **"collection 1 - Restful Booker"**, will now appear in your workspace.
+
+### 2. Understanding the Workflow
+This collection is designed to be run in a specific order. It uses **Collection Variables** to pass data between requests automatically.
+
+- `{{baseUrl}}` is pre-configured to `https://restful-booker.herokuapp.com`.
+- `{{bookingId}}` and `{{authToken}}` will be populated automatically as you run the requests.
+
+### 3. Execution Flow
+Run the requests in the following order to see the full workflow in action:
+
+1.  **`Create Booking`**
+    - **Action:** Sends a `POST` request to `/booking` to create a new booking entry.
+    - **Automation:** The `Tests` script automatically captures the `bookingid` from the response and saves it to the `{{bookingId}}` collection variable.
+
+2.  **`Auth - Create Token`**
+    - **Action:** Sends a `POST` request to `/auth` with admin credentials to get an authentication token.
+    - **Automation:** The `Tests` script captures the `token` from the response and saves it to the `{{authToken}}` collection variable. This token is required for updating or deleting bookings.
+
+3.  **`Update Booking`**
+    - **Action:** Sends a `PUT` request to `/booking/{{bookingId}}` to modify the booking created in the first step.
+    - **Automation:** It uses the `{{bookingId}}` variable in the URL and the `{{authToken}}` as a cookie for authentication. The request body contains the updated booking details.
+
+4.  **`Get Booking by ID`**
+    - **Action:** Sends a `GET` request to `/booking/{{bookingId}}` to retrieve the details of a single booking.
+    - **Automation:** It uses the `{{bookingId}}` variable in the URL.
+    - **Purpose:** This request is perfect for verifying that the `Update Booking` request was successful and that the data has been changed.
+
+You can now run these requests sequentially to test the complete booking lifecycle.
