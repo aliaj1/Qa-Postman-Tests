@@ -1,0 +1,107 @@
+{
+	"info": {
+		"_postman_id": "ffeee06b-9189-428f-8fb0-eea16c9ce2fd",
+		"name": "collection3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46130343",
+		"_collection_link": "https://baseil.postman.co/workspace/BASEIL's-Workspace~1556efc2-ad33-4528-8e21-87b091137e8b/collection/46130343-ffeee06b-9189-428f-8fb0-eea16c9ce2fd?action=share&source=collection_link&creator=46130343"
+	},
+	"item": [
+		{
+			"name": "get all  booking",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/booking",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Get the token from the collection variable\r",
+							"let token = pm.collectionVariables.get(\"token\");\r",
+							"\r",
+							"// Save it into the environment variable called 'scenarios2'\r",
+							"if (token) {\r",
+							"    pm.environment.set(\"scenario2\", token);\r",
+							"    console.log(\"Token successfully copied to environment variable 'scenario2'\");\r",
+							"} else {\r",
+							"    console.warn(\"Token not found in collection variables.\");\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/auth",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "get booking by iD",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
