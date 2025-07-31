@@ -1,0 +1,155 @@
+{
+	"info": {
+		"_postman_id": "5e01ded6-c664-475d-9796-26fa69d829a5",
+		"name": "OpenWeatherMap QA Tests",
+		"description": "Postman collection with basic QA checks for OpenWeatherMap API (Current Weather endpoints).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9917303"
+	},
+	"item": [
+		{
+			"name": "Current Weather - By City Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+							"const json = pm.response.json();",
+							"pm.test('Contains temperature data', () => pm.expect(json.main.temp).to.be.a('number'));",
+							"pm.test('City is London', () => pm.expect(json.name).to.eql('London'));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.openweathermap.org/data/2.5/weather?q=London&appid={{apiKey}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"openweathermap",
+						"org"
+					],
+					"path": [
+						"data",
+						"2.5",
+						"weather"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "London"
+						},
+						{
+							"key": "appid",
+							"value": "{{apiKey}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Current Weather - By Coordinates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+							"const json = pm.response.json();",
+							"pm.test('Has coordinates', () => {",
+							"  pm.expect(json.coord.lat).to.be.closeTo(51.51, 0.5);",
+							"  pm.expect(json.coord.lon).to.be.closeTo(-0.13, 0.5);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.openweathermap.org/data/2.5/weather?lat=51.51&lon=-0.13&appid={{apiKey}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"openweathermap",
+						"org"
+					],
+					"path": [
+						"data",
+						"2.5",
+						"weather"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "51.51"
+						},
+						{
+							"key": "lon",
+							"value": "-0.13"
+						},
+						{
+							"key": "appid",
+							"value": "{{apiKey}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Current Weather - Invalid City (Negative Test)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Returns 404 for invalid city', () => pm.response.to.have.status(404));",
+							"const json = pm.response.json();",
+							"pm.test('Has message in error response', () => pm.expect(json.message).to.be.a('string'));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.openweathermap.org/data/2.5/weather?q=ThisCityDoesNotExist&appid={{apiKey}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"openweathermap",
+						"org"
+					],
+					"path": [
+						"data",
+						"2.5",
+						"weather"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "ThisCityDoesNotExist"
+						},
+						{
+							"key": "appid",
+							"value": "{{apiKey}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
